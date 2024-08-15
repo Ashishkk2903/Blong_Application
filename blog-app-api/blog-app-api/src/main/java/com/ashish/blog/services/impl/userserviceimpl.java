@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.catalina.User;
 import org.aspectj.weaver.patterns.ThisOrTargetAnnotationPointcut;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class userserviceimpl implements userService {
 	
 	@Autowired
 	private userRepo userRepo;
+	
+	@Autowired
+	private ModelMapper mapper;
 
 	@Override
 	public userDto createuser(userDto userdto) 
@@ -35,11 +39,12 @@ public class userserviceimpl implements userService {
 	public userDto updateuser(userDto user, Integer userid) {
 		
 		user user1=this.userRepo.findById(userid).orElseThrow(()-> new ResourceNotFoundException("user","id",userid));
-		user1=this.dtotouser(user);
-		
+		user1.setName(user.getName());
+		user1.setEmail(user.getEmail());
+		user1.setPassword(user.getPassword());
+		user1.setAbout(user.getAbout());
 		user updatedUser=this.userRepo.save(user1);
-		userDto usDto=this.usertoDto(user1);
-		return usDto;
+		return mapper.map(updatedUser, userDto.class);
 	}
 
 	@Override
@@ -64,23 +69,13 @@ public class userserviceimpl implements userService {
 	
 	private user dtotouser(userDto use)
 	{
-		user us=new user();
-		us.setId(use.getId());
-		us.setName(use.getName());
-		us.setEmail(use.getEmail());
-		us.setPassword(use.getPassword());
-		us.setAbout(use.getAbout());
+		user us=this.mapper.map(use, user.class);
 		return us;
 	}
 	
 	private userDto usertoDto(user use)
 	{
-		userDto us=new userDto();
-		us.setId(use.getId());
-		us.setName(use.getName());
-		us.setEmail(use.getEmail());
-		us.setPassword(use.getPassword());
-		us.setAbout(use.getAbout());
+		userDto us=mapper.map(use, userDto.class);
 		return us;
 	}
 

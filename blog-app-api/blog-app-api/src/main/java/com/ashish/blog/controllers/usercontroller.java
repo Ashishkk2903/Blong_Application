@@ -2,9 +2,9 @@ package com.ashish.blog.controllers;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +15,12 @@ import com.ashish.blog.payloads.apiresponce;
 import com.ashish.blog.payloads.userDto;
 import com.ashish.blog.services.userService;
 
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -33,14 +32,14 @@ public class usercontroller {
 	private userService uService;
 	
 	@PostMapping("/")
-	public ResponseEntity<userDto> createuser(@RequestBody userDto usdto)
+	public ResponseEntity<userDto> createuser( @RequestBody @Valid userDto usdto)
 	{
 		userDto createduserDto=this.uService.createuser(usdto);
 		return new ResponseEntity<>(createduserDto,HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/{userid}")
-	public ResponseEntity<userDto> updateuser(@RequestBody userDto userDto,@PathVariable Integer userid)
+	public ResponseEntity<userDto> updateuser( @RequestBody @Valid userDto userDto,@PathVariable Integer userid)
 	{
 		userDto updateUserDto=this.uService.updateuser(userDto, userid);
 		return ResponseEntity.ok(updateUserDto);
